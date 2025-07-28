@@ -7,10 +7,10 @@ export function App() {
       <h1>Hello World!!!</h1>
 
       <Button />
-      <Button color="primary"/>
-      <Button color="secondary"/>
-      <Button color="danger"/>
-      <Button color="success"/>
+      <Button variant="primary"/>
+      <Button variant="secondary"/>
+      <Button variant="danger"/>
+      <Button variant="success"/>
     </>
   )
 }
