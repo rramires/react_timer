@@ -1,0 +1,22 @@
+.button {
+    width: 10rem;
+    height: 3rem;
+    
+    font-weight: bold;
+}
+
+.primary {
+    background: purple;
+}
+
+.secondary {
+    background: orange;
+}
+
+.danger {
+    background: red;
+}
+
+.success {
+    background: green;
+}
