@@ -1,4 +1,4 @@
-import { HistoryContainer, HistoryList } from './History.style'
+import { HistoryContainer, HistoryList, StatusRender } from './History.style'
 
 export function History() {
 	return (
@@ -19,43 +19,57 @@ export function History() {
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Em andamento</td>
+							<td>
+								<StatusRender statusColor='yellow'>Em andamento</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Interrompido</td>
+							<td>
+								<StatusRender statusColor='red'>Interrompido</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Concluído</td>
+							<td>
+								<StatusRender statusColor='green'>Concluído</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Concluído</td>
+							<td>
+								<StatusRender statusColor='green'>Concluído</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Concluído</td>
+							<td>
+								<StatusRender statusColor='green'>Concluído</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Concluído</td>
+							<td>
+								<StatusRender statusColor='green'>Concluído</StatusRender>
+							</td>
 						</tr>
 						<tr>
 							<td>Minha tarefa 1</td>
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
-							<td>Concluído</td>
+							<td>
+								<StatusRender statusColor='green'>Concluído</StatusRender>
+							</td>
 						</tr>
 					</tbody>
 				</table>
