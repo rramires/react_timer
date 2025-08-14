@@ -1,5 +1,7 @@
 import { Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
+/* import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod' */
 
 import {
 	HomeContainer,
@@ -10,8 +12,20 @@ import {
 	TimeInput,
 } from './Home.style'
 
+/* const validationSchema = zod.object({
+	task: zod.string().min(3, 'Informe a tarefa.'),
+	duration: zod
+		.string()
+		.min(5, 'Ciclo menor que 5.')
+		.max(60, 'Ciclo maior que 60.'),
+}) */
+
 export function Home() {
-	const { register, handleSubmit, watch } = useForm()
+	const { register, handleSubmit, watch /* formState */ } =
+		useForm(/* {
+		resolver: zodResolver(validationSchema),
+	} */)
+	/* console.log('formState.errors: ', formState.errors) */
 
 	const task = watch('task')
 	const isSubimitDisabled = !task
@@ -45,6 +59,7 @@ export function Home() {
 						step={5}
 						min={5}
 						max={60}
+						defaultValue={5}
 						placeholder='00'
 						{...register('duration', { valueAsNumber: true })}
 					/>
