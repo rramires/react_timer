@@ -32,13 +32,14 @@ type FormData = zod.infer<typeof validationSchema>
 
 export function Home() {
 	//
-	const { register, handleSubmit, watch, formState } = useForm<FormData>({
-		defaultValues: {
-			task: '',
-			duration: 5,
-		},
-		resolver: zodResolver(validationSchema),
-	})
+	const { register, handleSubmit, watch, formState, reset } =
+		useForm<FormData>({
+			defaultValues: {
+				task: '',
+				duration: 5,
+			},
+			resolver: zodResolver(validationSchema),
+		})
 	console.log('formState.errors: ', formState.errors)
 
 	/*
@@ -53,6 +54,8 @@ export function Home() {
 
 	function handleSubmitForm(data: FormData) {
 		console.log('data->', data)
+
+		reset() //change to defaultValues again
 	}
 
 	return (
