@@ -1,7 +1,7 @@
 import { Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
-/* import { zodResolver } from '@hookform/resolvers/zod'
-import * as zod from 'zod' */
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as zod from 'zod'
 
 import {
 	HomeContainer,
@@ -12,35 +12,55 @@ import {
 	TimeInput,
 } from './Home.style'
 
-/* const validationSchema = zod.object({
+const validationSchema = zod.object({
 	task: zod.string().min(3, 'Informe a tarefa.'),
 	duration: zod
-		.string()
+		.number()
 		.min(5, 'Ciclo menor que 5.')
 		.max(60, 'Ciclo maior que 60.'),
-}) */
+})
+
+/* interface FormData {
+	task: string
+	duration: number
+} 
+use in: useForm<FormData>	
+*/
+
+// get types from schema
+type FormData = zod.infer<typeof validationSchema>
 
 export function Home() {
-	const { register, handleSubmit, watch /* formState */ } =
-		useForm(/* {
+	//
+	const { register, handleSubmit, watch, formState } = useForm<FormData>({
+		defaultValues: {
+			task: '',
+			duration: 5,
+		},
 		resolver: zodResolver(validationSchema),
-	} */)
-	/* console.log('formState.errors: ', formState.errors) */
+	})
+	console.log('formState.errors: ', formState.errors)
 
+	/*
+	 * Notes:
+	 * Types come from defaultValues
+	 * Watch triggers rendering on each change
+	 */
 	const task = watch('task')
-	const isSubimitDisabled = !task
+	const duration = watch('duration')
+	const isSubimitDisabled = task.length < 3
+	console.log('task: ', task, ' - duration: ', duration)
 
-	function handleSubmitForm(data: object) {
+	function handleSubmitForm(data: FormData) {
 		console.log('data->', data)
 	}
 
 	return (
 		<HomeContainer>
-			<form onSubmit={handleSubmit(handleSubmitForm)} action=''>
+			<form onSubmit={handleSubmit(handleSubmitForm)}>
 				<FormContainer>
 					<label htmlFor='task'>Vou trabalhar em</label>
 					<TaskInput
-						id='task'
 						type='text'
 						placeholder='Dê um nome para sua tarefa'
 						list='task-suggestions'
@@ -54,12 +74,10 @@ export function Home() {
 					</datalist>
 					<label htmlFor='minutes'>Durante</label>
 					<TimeInput
-						id='duration'
 						type='number'
 						step={5}
 						min={5}
 						max={60}
-						defaultValue={5}
 						placeholder='00'
 						{...register('duration', { valueAsNumber: true })}
 					/>
