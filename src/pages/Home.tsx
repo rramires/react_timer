@@ -1,6 +1,7 @@
 import { Play } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import * as zod from 'zod'
 
 import {
@@ -20,43 +21,52 @@ const validationSchema = zod.object({
 		.max(60, 'Ciclo maior que 60.'),
 })
 
-/* interface FormData {
-	task: string
-	duration: number
-} 
-use in: useForm<FormData>	
-*/
-
 // get types from schema
 type FormData = zod.infer<typeof validationSchema>
 
+interface Cycle {
+	id: string
+	task: string
+	duration: number
+}
+
 export function Home() {
-	//
-	const { register, handleSubmit, watch, formState, reset } =
-		useForm<FormData>({
-			defaultValues: {
-				task: '',
-				duration: 5,
-			},
-			resolver: zodResolver(validationSchema),
-		})
-	console.log('formState.errors: ', formState.errors)
+	// States
+	const [cycles, setCycles] = useState<Cycle[]>([])
+	const [activeCycleId, SetActiveCycleId] = useState<string | null>(null)
 
-	/*
-	 * Notes:
-	 * Types come from defaultValues
-	 * Watch triggers rendering on each change
-	 */
+	// Validation
+	const { register, handleSubmit, watch, reset } = useForm<FormData>({
+		defaultValues: {
+			task: '',
+			duration: 5,
+		},
+		resolver: zodResolver(validationSchema),
+	})
+
 	const task = watch('task')
-	const duration = watch('duration')
 	const isSubimitDisabled = task.length < 3
-	console.log('task: ', task, ' - duration: ', duration)
 
+	// Submit
 	function handleSubmitForm(data: FormData) {
-		console.log('data->', data)
+		const newId: string = new Date().getTime().toString()
 
-		reset() //change to defaultValues again
+		const newCycle: Cycle = {
+			id: newId,
+			task: data.task,
+			duration: data.duration,
+		}
+
+		setCycles(() => [...cycles, newCycle])
+		SetActiveCycleId(newId)
+
+		reset()
 	}
+
+	// Actual/active cycle
+	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+	console.log('activeCycle: ', activeCycle)
 
 	return (
 		<HomeContainer>
