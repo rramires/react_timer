@@ -33,7 +33,8 @@ interface Cycle {
 export function Home() {
 	// States
 	const [cycles, setCycles] = useState<Cycle[]>([])
-	const [activeCycleId, SetActiveCycleId] = useState<string | null>(null)
+	const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
+	const [secondsPassed, setSecondsPassed] = useState(0)
 
 	// Validation
 	const { register, handleSubmit, watch, reset } = useForm<FormData>({
@@ -45,6 +46,7 @@ export function Home() {
 	})
 
 	const task = watch('task')
+
 	const isSubimitDisabled = task.length < 3
 
 	// Submit
@@ -58,7 +60,7 @@ export function Home() {
 		}
 
 		setCycles(() => [...cycles, newCycle])
-		SetActiveCycleId(newId)
+		setActiveCycleId(newId)
 
 		reset()
 	}
@@ -66,7 +68,17 @@ export function Home() {
 	// Actual/active cycle
 	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-	console.log('activeCycle: ', activeCycle)
+	// Countdown
+
+	// get seconds
+	const totalSeconds = activeCycle ? activeCycle.duration * 60 : 0
+	const currentSeconds = activeCycle ? totalSeconds - secondsPassed : 0
+	// calc
+	const minutesAmount = Math.floor(currentSeconds / 60) // 24.59 => 24
+	const secondsAmount = currentSeconds % 60 // 24.59 => 59
+	// show
+	const minutesStr = String(minutesAmount).padStart(2, '0')
+	const secondsStr = String(secondsAmount).padStart(2, '0')
 
 	return (
 		<HomeContainer>
@@ -97,11 +109,11 @@ export function Home() {
 					<span>minutos.</span>
 				</FormContainer>
 				<CountdownContainer>
-					<span>0</span>
-					<span>0</span>
+					<span>{minutesStr[0]}</span>
+					<span>{minutesStr[1]}</span>
 					<div>:</div>
-					<span>0</span>
-					<span>0</span>
+					<span>{secondsStr[0]}</span>
+					<span>{secondsStr[1]}</span>
 				</CountdownContainer>
 				<StartButton type='submit' disabled={isSubimitDisabled}>
 					Começar
