@@ -65,6 +65,7 @@ export function Home() {
 
 		setCycles(() => [...cycles, newCycle])
 		setActiveCycleId(newId)
+		setSecondsPassed(0)
 
 		reset()
 	}
@@ -72,15 +73,20 @@ export function Home() {
 	// Actual/active cycle
 	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
-	// Countdown
+	// countdown
 	useEffect(() => {
+		let interval: number
 		if (activeCycle) {
-			setInterval(() => {
+			interval = setInterval(() => {
 				setSecondsPassed(
 					// calc and set the difference
 					differenceInSeconds(new Date(), activeCycle.startDate),
 				)
 			}, 1000)
+		}
+		// clear interval if exists
+		return () => {
+			clearInterval(interval)
 		}
 	}, [activeCycle])
 
@@ -93,6 +99,17 @@ export function Home() {
 	// show
 	const minutesStr = String(minutesAmount).padStart(2, '0')
 	const secondsStr = String(secondsAmount).padStart(2, '0')
+
+	// change title
+	useEffect(() => {
+		if (activeCycle) {
+			const titleTask =
+				activeCycle.task.length < 20
+					? activeCycle.task
+					: activeCycle.task.slice(0, 20) + '...'
+			document.title = `${minutesStr}:${secondsStr} - ${titleTask}`
+		}
+	}, [activeCycle, minutesStr, secondsStr])
 
 	return (
 		<HomeContainer>
