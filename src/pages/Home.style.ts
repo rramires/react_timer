@@ -92,7 +92,7 @@ export const CountdownContainer = styled.main`
 	}
 `
 
-export const StartButton = styled.button`
+export const BaseButton = styled.button`
 	width: 100%;
 	border: none;
 	border-radius: 8px;
@@ -105,15 +105,27 @@ export const StartButton = styled.button`
 
 	font-weight: bold;
 	color: ${(props) => props.theme['gray-100']};
-	background: ${(props) => props.theme['green-500']};
+
 	cursor: pointer;
 
 	&:disabled {
 		opacity: 0.7;
 		cursor: not-allowed;
 	}
+`
+
+export const StartButton = styled(BaseButton)`
+	background: ${(props) => props.theme['green-500']};
 
 	&:not(:disabled):hover {
 		background: ${(props) => props.theme['green-700']};
+	}
+`
+
+export const StopButton = styled(BaseButton)`
+	background: ${(props) => props.theme['red-500']};
+
+	&:not(:disabled):hover {
+		background: ${(props) => props.theme['red-700']};
 	}
 `
