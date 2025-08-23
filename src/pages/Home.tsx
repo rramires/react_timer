@@ -32,6 +32,7 @@ interface Cycle {
 	duration: number
 	startDate: Date
 	interruptDate?: Date
+	finishDate?: Date
 }
 
 export function Home() {
@@ -75,15 +76,37 @@ export function Home() {
 	// Actual/active cycle
 	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
+	// get total
+	const totalSeconds = activeCycle ? activeCycle.duration * 60 : 0
+
 	// countdown
 	useEffect(() => {
 		let interval: number
 		if (activeCycle) {
 			interval = setInterval(() => {
-				setSecondsPassed(
-					// calc and set the difference
-					differenceInSeconds(new Date(), activeCycle.startDate),
+				// calc and set the difference
+				const diffInSeconds = differenceInSeconds(
+					new Date(),
+					activeCycle.startDate,
 				)
+				// check if it's finished
+				if (diffInSeconds >= totalSeconds) {
+					// end cycle
+					setCycles((state) =>
+						state.map((cycle) => {
+							if (cycle.id === activeCycleId) {
+								return { ...cycle, finishDate: new Date() }
+							} else {
+								return cycle
+							}
+						}),
+					)
+					setSecondsPassed(totalSeconds)
+					clearInterval(interval)
+				} else {
+					// or set difference
+					setSecondsPassed(diffInSeconds)
+				}
 			}, 1000)
 		}
 		// clear interval if exists
@@ -92,10 +115,8 @@ export function Home() {
 		}
 	}, [activeCycle])
 
-	// get seconds
-	const totalSeconds = activeCycle ? activeCycle.duration * 60 : 0
-	const currentSeconds = activeCycle ? totalSeconds - secondsPassed : 0
 	// calc
+	const currentSeconds = activeCycle ? totalSeconds - secondsPassed : 0
 	const minutesAmount = Math.floor(currentSeconds / 60) // 24.59 => 24
 	const secondsAmount = currentSeconds % 60 // 24.59 => 59
 	// show
@@ -115,9 +136,9 @@ export function Home() {
 
 	// interrupt cycle
 	function handleInterruptCycle() {
-		setCycles(
-			// find and set interruptDate
-			cycles.map((cycle) => {
+		// find and set interruptDate
+		setCycles((state) =>
+			state.map((cycle) => {
 				if (cycle.id === activeCycleId) {
 					return { ...cycle, interruptDate: new Date() }
 				} else {
