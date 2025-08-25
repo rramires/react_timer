@@ -13,7 +13,7 @@ import {
 	StopButton,
 	TaskInput,
 	TimeInput,
-} from './Home.style'
+} from './styles'
 
 const validationSchema = zod.object({
 	task: zod.string().min(3, 'Informe a tarefa.'),
