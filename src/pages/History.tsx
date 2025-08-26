@@ -1,9 +1,14 @@
 import { HistoryContainer, HistoryList, StatusRender } from './History.style'
+import { useContext } from 'react'
+import { CyclesContext } from '../contexts/CyclesContext'
 
 export function History() {
+	const { cycles } = useContext(CyclesContext)
+
 	return (
 		<HistoryContainer>
 			<h1>Meu histórico</h1>
+			<pre>{JSON.stringify(cycles, null, 2)}</pre>
 			<HistoryList>
 				<table>
 					<thead>
@@ -20,7 +25,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='yellow'>Em andamento</StatusRender>
+								<StatusRender statusColor='yellow'>
+									Em andamento
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -28,7 +35,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='red'>Interrompido</StatusRender>
+								<StatusRender statusColor='red'>
+									Interrompido
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -36,7 +45,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='green'>Concluído</StatusRender>
+								<StatusRender statusColor='green'>
+									Concluído
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -44,7 +55,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='green'>Concluído</StatusRender>
+								<StatusRender statusColor='green'>
+									Concluído
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -52,7 +65,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='green'>Concluído</StatusRender>
+								<StatusRender statusColor='green'>
+									Concluído
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -60,7 +75,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='green'>Concluído</StatusRender>
+								<StatusRender statusColor='green'>
+									Concluído
+								</StatusRender>
 							</td>
 						</tr>
 						<tr>
@@ -68,7 +85,9 @@ export function History() {
 							<td>20 minutos</td>
 							<td>Há duas horas</td>
 							<td>
-								<StatusRender statusColor='green'>Concluído</StatusRender>
+								<StatusRender statusColor='green'>
+									Concluído
+								</StatusRender>
 							</td>
 						</tr>
 					</tbody>
