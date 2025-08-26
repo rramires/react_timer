@@ -41,7 +41,7 @@ export function Home() {
 		task: zod.string().min(3, 'Informe a tarefa.'),
 		duration: zod
 			.number()
-			.min(5, 'Ciclo menor que 5.')
+			.min(1, 'Ciclo menor que 5.')
 			.max(60, 'Ciclo maior que 60.'),
 	})
 
@@ -92,6 +92,8 @@ export function Home() {
 				}
 			}),
 		)
+		// stop
+		setActiveCycleId(null)
 	}
 
 	// interrupt cycle
@@ -106,9 +108,8 @@ export function Home() {
 				}
 			}),
 		)
-		// interrupt
+		// stop
 		setActiveCycleId(null)
-		// console.log('cycles: ', cycles)
 	}
 
 	return (
