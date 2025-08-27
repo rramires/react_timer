@@ -1,6 +1,15 @@
 import { HistoryContainer, HistoryList, StatusRender } from './styles'
 import { useContext } from 'react'
 import { CyclesContext } from '../../contexts/CyclesContext'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
+function dateFormat(date: Date) {
+	return formatDistanceToNow(date, {
+		addSuffix: true,
+		locale: ptBR,
+	})
+}
 
 export function History() {
 	const { cycles } = useContext(CyclesContext)
@@ -8,7 +17,7 @@ export function History() {
 	return (
 		<HistoryContainer>
 			<h1>Meu histórico</h1>
-			<pre>{JSON.stringify(cycles, null, 2)}</pre>
+			{/* <pre>{JSON.stringify(cycles, null, 2)}</pre> */}
 			<HistoryList>
 				<table>
 					<thead>
@@ -20,76 +29,33 @@ export function History() {
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='yellow'>
-									Em andamento
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='red'>
-									Interrompido
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='green'>
-									Concluído
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='green'>
-									Concluído
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='green'>
-									Concluído
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='green'>
-									Concluído
-								</StatusRender>
-							</td>
-						</tr>
-						<tr>
-							<td>Minha tarefa 1</td>
-							<td>20 minutos</td>
-							<td>Há duas horas</td>
-							<td>
-								<StatusRender statusColor='green'>
-									Concluído
-								</StatusRender>
-							</td>
-						</tr>
+						{cycles.map((cycle) => {
+							return (
+								<tr key={cycle.id}>
+									<td>{cycle.task}</td>
+									<td>{cycle.duration}</td>
+									<td>{dateFormat(cycle.startDate)}</td>
+									<td>
+										{cycle.finishDate && (
+											<StatusRender statusColor='green'>
+												Concluído
+											</StatusRender>
+										)}
+										{cycle.interruptDate && (
+											<StatusRender statusColor='red'>
+												Interrompido
+											</StatusRender>
+										)}
+										{!cycle.interruptDate &&
+											!cycle.finishDate && (
+												<StatusRender statusColor='yellow'>
+													Em andamento
+												</StatusRender>
+											)}
+									</td>
+								</tr>
+							)
+						})}
 					</tbody>
 				</table>
 			</HistoryList>
