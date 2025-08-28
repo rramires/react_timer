@@ -1,4 +1,4 @@
-import { createContext, useState, type ReactNode } from 'react'
+import { createContext, useState, useReducer, type ReactNode } from 'react'
 
 interface Cycle {
 	id: string
@@ -30,13 +30,54 @@ interface CyclesContextProviderProps {
 	children: ReactNode
 }
 
+// actions
+const CREATE_ACTION = 'CREATE_ACTION'
+const FINISH_ACTION = 'FINISH_ACTION'
+const INTERRUPT_ACTION = 'INTERRUPT_ACTION'
+
+interface Action {
+	type: typeof CREATE_ACTION | typeof FINISH_ACTION | typeof INTERRUPT_ACTION
+	payload: any
+}
+
 export function CyclesContextProvider({
 	children,
 }: CyclesContextProviderProps) {
 	// States
-	const [cycles, setCycles] = useState<Cycle[]>([])
 	const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
 	const [secondsPassed, setSecondsPassed] = useState(0)
+
+	// Reducers
+	const [cycles, dispatch] = useReducer((state: Cycle[], action: Action) => {
+		// create
+		if (action.type === CREATE_ACTION) {
+			return [...state, action.payload.newCycle]
+		}
+
+		// finish
+		if (action.type === FINISH_ACTION) {
+			return state.map((cycle) => {
+				if (cycle.id === action.payload.activeCycleId) {
+					return { ...cycle, finishDate: new Date() }
+				} else {
+					return cycle
+				}
+			})
+		}
+
+		// interrupt
+		if (action.type === INTERRUPT_ACTION) {
+			return state.map((cycle) => {
+				if (cycle.id === action.payload.activeCycleId) {
+					return { ...cycle, interruptDate: new Date() }
+				} else {
+					return cycle
+				}
+			})
+		}
+
+		return state
+	}, [])
 
 	// Actual/active cycle
 	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
@@ -44,50 +85,39 @@ export function CyclesContextProvider({
 	// new cycle
 	function createNewCycle(data: CreateCycleData) {
 		const startDate: Date = new Date()
-		const newId = startDate.getTime().toString()
 
 		const newCycle: Cycle = {
-			id: newId,
+			id: startDate.getTime().toString(),
 			task: data.task,
 			duration: data.duration,
 			startDate,
 		}
 
-		setCycles(() => [...cycles, newCycle])
-		setActiveCycleId(newId)
-		setSecondsPassed(0)
+		dispatch({
+			type: CREATE_ACTION,
+			payload: { newCycle },
+		})
 
-		// FIXME: reset()
+		setActiveCycleId(newCycle.id)
+		setSecondsPassed(0)
 	}
 
-	// finish cycle
 	function setCycleFinished() {
-		// end cycle
-		setCycles((state) =>
-			state.map((cycle) => {
-				if (cycle.id === activeCycleId) {
-					return { ...cycle, finishDate: new Date() }
-				} else {
-					return cycle
-				}
-			}),
-		)
+		// finish cycle
+		dispatch({
+			type: FINISH_ACTION,
+			payload: { activeCycleId },
+		})
 		// stop
 		setActiveCycleId(null)
 	}
 
-	// interrupt cycle
 	function interruptCycle() {
-		// find and set interruptDate
-		setCycles((state) =>
-			state.map((cycle) => {
-				if (cycle.id === activeCycleId) {
-					return { ...cycle, interruptDate: new Date() }
-				} else {
-					return cycle
-				}
-			}),
-		)
+		// interrupt cycle
+		dispatch({
+			type: INTERRUPT_ACTION,
+			payload: { activeCycleId },
+		})
 		// stop
 		setActiveCycleId(null)
 	}
