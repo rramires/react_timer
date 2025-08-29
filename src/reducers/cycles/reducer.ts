@@ -31,10 +31,10 @@ export function cyclesReducer(state: CyclesState, action: Action) {
 			return createCycleAction(state, action)
 
 		case ActionTypes.FINISH_ACTION:
-			return finishCycleAction(state, action)
+			return finishCycleAction(state)
 
 		case ActionTypes.INTERRUPT_ACTION:
-			return interruptCycleAction(state, action)
+			return interruptCycleAction(state)
 
 		default:
 			return state

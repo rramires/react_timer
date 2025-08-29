@@ -14,7 +14,7 @@ export function createCycleAction(state: CyclesState, action: Action) {
 	}
 }
 
-export function finishCycleAction(state: CyclesState, action: Action) {
+export function finishCycleAction(state: CyclesState) {
 	return {
 		...state,
 		cycles: state.cycles.map((cycle) => {
@@ -28,7 +28,7 @@ export function finishCycleAction(state: CyclesState, action: Action) {
 	}
 }
 
-export function interruptCycleAction(state: CyclesState, action: Action) {
+export function interruptCycleAction(state: CyclesState) {
 	return {
 		...state,
 		cycles: state.cycles.map((cycle) => {
