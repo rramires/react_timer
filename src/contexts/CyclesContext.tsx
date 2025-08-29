@@ -17,12 +17,11 @@ interface CreateCycleData {
 interface CyclesContextTypes {
 	cycles: Cycle[]
 	activeCycle: Cycle | undefined
-	activeCycleId: string | null
 	secondsPassed: number
-	createNewCycle: (data: CreateCycleData) => void
-	interruptCycle: () => void
 	setSecondsPassed: (seconds: number) => void
+	createNewCycle: (data: CreateCycleData) => void
 	setCycleFinished: () => void
+	interruptCycle: () => void
 }
 export const CyclesContext = createContext({} as CyclesContextTypes)
 
@@ -37,50 +36,64 @@ const INTERRUPT_ACTION = 'INTERRUPT_ACTION'
 
 interface Action {
 	type: typeof CREATE_ACTION | typeof FINISH_ACTION | typeof INTERRUPT_ACTION
-	payload: any
+	payload?: any
 }
 
 export function CyclesContextProvider({
 	children,
 }: CyclesContextProviderProps) {
 	// States
-	const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
 	const [secondsPassed, setSecondsPassed] = useState(0)
 
+	interface CyclesState {
+		cycles: Cycle[]
+		activeCycle: Cycle | null
+	}
+
 	// Reducers
-	const [cycles, dispatch] = useReducer((state: Cycle[], action: Action) => {
-		// create
-		if (action.type === CREATE_ACTION) {
-			return [...state, action.payload.newCycle]
-		}
+	const [cyclesState, dispatch] = useReducer(
+		(state: CyclesState, action: Action) => {
+			// switch actions
+			switch (action.type) {
+				case CREATE_ACTION:
+					return {
+						...state,
+						cycles: [...state.cycles, action.payload.newCycle],
+						activeCycle: action.payload.newCycle,
+					}
 
-		// finish
-		if (action.type === FINISH_ACTION) {
-			return state.map((cycle) => {
-				if (cycle.id === action.payload.activeCycleId) {
-					return { ...cycle, finishDate: new Date() }
-				} else {
-					return cycle
-				}
-			})
-		}
+				case FINISH_ACTION:
+					return {
+						...state,
+						cycles: state.cycles.map((cycle) => {
+							if (cycle.id === state.activeCycle?.id) {
+								return { ...cycle, finishDate: new Date() }
+							} else {
+								return cycle
+							}
+						}),
+						activeCycle: null,
+					}
 
-		// interrupt
-		if (action.type === INTERRUPT_ACTION) {
-			return state.map((cycle) => {
-				if (cycle.id === action.payload.activeCycleId) {
-					return { ...cycle, interruptDate: new Date() }
-				} else {
-					return cycle
-				}
-			})
-		}
+				case INTERRUPT_ACTION:
+					return {
+						...state,
+						cycles: state.cycles.map((cycle) => {
+							if (cycle.id === state.activeCycle?.id) {
+								return { ...cycle, interruptDate: new Date() }
+							} else {
+								return cycle
+							}
+						}),
+						activeCycle: null,
+					}
 
-		return state
-	}, [])
-
-	// Actual/active cycle
-	const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+				default:
+					return state
+			}
+		},
+		{ cycles: [], activeCycle: null },
+	)
 
 	// new cycle
 	function createNewCycle(data: CreateCycleData) {
@@ -98,7 +111,6 @@ export function CyclesContextProvider({
 			payload: { newCycle },
 		})
 
-		setActiveCycleId(newCycle.id)
 		setSecondsPassed(0)
 	}
 
@@ -106,32 +118,25 @@ export function CyclesContextProvider({
 		// finish cycle
 		dispatch({
 			type: FINISH_ACTION,
-			payload: { activeCycleId },
 		})
-		// stop
-		setActiveCycleId(null)
 	}
 
 	function interruptCycle() {
 		// interrupt cycle
 		dispatch({
 			type: INTERRUPT_ACTION,
-			payload: { activeCycleId },
 		})
-		// stop
-		setActiveCycleId(null)
 	}
 
 	return (
 		<CyclesContext.Provider
 			value={{
-				cycles,
-				activeCycle,
-				activeCycleId,
+				cycles: cyclesState.cycles,
+				activeCycle: cyclesState.activeCycle,
 				secondsPassed,
 				setSecondsPassed,
-				setCycleFinished,
 				createNewCycle,
+				setCycleFinished,
 				interruptCycle,
 			}}
 		>
