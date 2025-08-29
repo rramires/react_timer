@@ -1,13 +1,11 @@
 import { createContext, useState, useReducer, type ReactNode } from 'react'
-
-interface Cycle {
-	id: string
-	task: string
-	duration: number
-	startDate: Date
-	interruptDate?: Date
-	finishDate?: Date
-}
+import {
+	ActionTypes,
+	cyclesReducer,
+	type Action,
+	type Cycle,
+	type CyclesState,
+} from '../reducers/cycles'
 
 interface CreateCycleData {
 	task: string
@@ -29,68 +27,17 @@ interface CyclesContextProviderProps {
 	children: ReactNode
 }
 
-// actions
-const CREATE_ACTION = 'CREATE_ACTION'
-const FINISH_ACTION = 'FINISH_ACTION'
-const INTERRUPT_ACTION = 'INTERRUPT_ACTION'
-
-interface Action {
-	type: typeof CREATE_ACTION | typeof FINISH_ACTION | typeof INTERRUPT_ACTION
-	payload?: any
-}
-
 export function CyclesContextProvider({
 	children,
 }: CyclesContextProviderProps) {
 	// States
 	const [secondsPassed, setSecondsPassed] = useState(0)
 
-	interface CyclesState {
-		cycles: Cycle[]
-		activeCycle: Cycle | null
-	}
-
 	// Reducers
 	const [cyclesState, dispatch] = useReducer(
 		(state: CyclesState, action: Action) => {
-			// switch actions
-			switch (action.type) {
-				case CREATE_ACTION:
-					return {
-						...state,
-						cycles: [...state.cycles, action.payload.newCycle],
-						activeCycle: action.payload.newCycle,
-					}
-
-				case FINISH_ACTION:
-					return {
-						...state,
-						cycles: state.cycles.map((cycle) => {
-							if (cycle.id === state.activeCycle?.id) {
-								return { ...cycle, finishDate: new Date() }
-							} else {
-								return cycle
-							}
-						}),
-						activeCycle: null,
-					}
-
-				case INTERRUPT_ACTION:
-					return {
-						...state,
-						cycles: state.cycles.map((cycle) => {
-							if (cycle.id === state.activeCycle?.id) {
-								return { ...cycle, interruptDate: new Date() }
-							} else {
-								return cycle
-							}
-						}),
-						activeCycle: null,
-					}
-
-				default:
-					return state
-			}
+			// switch reducer actions
+			return cyclesReducer(state, action)
 		},
 		{ cycles: [], activeCycle: null },
 	)
@@ -107,7 +54,7 @@ export function CyclesContextProvider({
 		}
 
 		dispatch({
-			type: CREATE_ACTION,
+			type: ActionTypes.CREATE_ACTION,
 			payload: { newCycle },
 		})
 
@@ -117,14 +64,14 @@ export function CyclesContextProvider({
 	function setCycleFinished() {
 		// finish cycle
 		dispatch({
-			type: FINISH_ACTION,
+			type: ActionTypes.FINISH_ACTION,
 		})
 	}
 
 	function interruptCycle() {
 		// interrupt cycle
 		dispatch({
-			type: INTERRUPT_ACTION,
+			type: ActionTypes.INTERRUPT_ACTION,
 		})
 	}
 
