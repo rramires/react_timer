@@ -1,11 +1,11 @@
 import { createContext, useState, useReducer, type ReactNode } from 'react'
 import {
-	ActionTypes,
 	cyclesReducer,
 	type Action,
 	type Cycle,
 	type CyclesState,
-} from '../reducers/cycles'
+} from '../reducers/cycles/reducer'
+import { ActionTypes } from '../reducers/cycles/actions'
 
 interface CreateCycleData {
 	task: string
