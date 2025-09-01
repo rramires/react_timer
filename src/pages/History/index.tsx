@@ -17,7 +17,6 @@ export function History() {
 	return (
 		<HistoryContainer>
 			<h1>Meu histórico</h1>
-			{/* <pre>{JSON.stringify(cycles, null, 2)}</pre> */}
 			<HistoryList>
 				<table>
 					<thead>
@@ -29,33 +28,35 @@ export function History() {
 						</tr>
 					</thead>
 					<tbody>
-						{cycles.map((cycle) => {
-							return (
-								<tr key={cycle.id}>
-									<td>{cycle.task}</td>
-									<td>{cycle.duration}</td>
-									<td>{dateFormat(cycle.startDate)}</td>
-									<td>
-										{cycle.finishDate && (
-											<StatusRender statusColor='green'>
-												Concluído
-											</StatusRender>
-										)}
-										{cycle.interruptDate && (
-											<StatusRender statusColor='red'>
-												Interrompido
-											</StatusRender>
-										)}
-										{!cycle.interruptDate &&
-											!cycle.finishDate && (
-												<StatusRender statusColor='yellow'>
-													Em andamento
+						{cycles
+							.map((cycle) => {
+								return (
+									<tr key={cycle.id}>
+										<td>{cycle.task}</td>
+										<td>{cycle.duration}</td>
+										<td>{dateFormat(cycle.startDate)}</td>
+										<td>
+											{cycle.finishDate && (
+												<StatusRender statusColor='green'>
+													Concluído
 												</StatusRender>
 											)}
-									</td>
-								</tr>
-							)
-						})}
+											{cycle.interruptDate && (
+												<StatusRender statusColor='red'>
+													Interrompido
+												</StatusRender>
+											)}
+											{!cycle.interruptDate &&
+												!cycle.finishDate && (
+													<StatusRender statusColor='yellow'>
+														Em andamento
+													</StatusRender>
+												)}
+										</td>
+									</tr>
+								)
+							})
+							.reverse()}
 					</tbody>
 				</table>
 			</HistoryList>

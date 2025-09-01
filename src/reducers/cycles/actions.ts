@@ -50,17 +50,6 @@ export function finishCycleAction(state: CyclesState) {
 }
 
 export function interruptCycleAction(state: CyclesState) {
-	/* return {
-		...state,
-		cycles: state.cycles.map((cycle) => {
-			if (cycle.id === state.activeCycle?.id) {
-				return { ...cycle, interruptDate: new Date() }
-			} else {
-				return cycle
-			}
-		}),
-		activeCycle: null,
-	} */
 	const cycleIndex = state.cycles.findIndex(
 		(cycle) => cycle.id === state.activeCycle?.id,
 	)

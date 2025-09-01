@@ -1,4 +1,10 @@
-import { createContext, useState, useReducer, type ReactNode } from 'react'
+import {
+	createContext,
+	useState,
+	useReducer,
+	useEffect,
+	type ReactNode,
+} from 'react'
 import {
 	cyclesReducer,
 	type Action,
@@ -7,6 +13,17 @@ import {
 } from '../reducers/cycles/reducer'
 import { ActionTypes } from '../reducers/cycles/actions'
 
+const localStorageName = 'com.flexbr@react_timer-v0.0.1'
+
+function dateReviver(_key: string, value: unknown) {
+	// to test ISO date format, ex: "2025-09-01T00:58:28.303Z"
+	const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/
+	if (typeof value === 'string' && isoDateRegex.test(value)) {
+		return new Date(value)
+	}
+	return value
+}
+
 interface CreateCycleData {
 	task: string
 	duration: number
@@ -14,7 +31,7 @@ interface CreateCycleData {
 
 interface CyclesContextTypes {
 	cycles: Cycle[]
-	activeCycle: Cycle | undefined
+	activeCycle: Cycle | null
 	secondsPassed: number
 	setSecondsPassed: (seconds: number) => void
 	createNewCycle: (data: CreateCycleData) => void
@@ -40,7 +57,25 @@ export function CyclesContextProvider({
 			return cyclesReducer(state, action)
 		},
 		{ cycles: [], activeCycle: null },
+		// triggered when the reducer is created. Ideal for calls to retrieve persisted data.
+		(initialState) => {
+			// get JSON data
+			const storeStateJSON = localStorage.getItem(localStorageName)
+			if (storeStateJSON) {
+				// set to state (dateReviver parse string ISO date to JS date)
+				return JSON.parse(storeStateJSON, dateReviver)
+			}
+			// if no return persisted data, set initial state
+			return initialState
+		},
 	)
+
+	// Effect to save to local storage on each cyclesState change
+	useEffect(() => {
+		const stateJSON = JSON.stringify(cyclesState)
+		// save JSON data
+		localStorage.setItem(localStorageName, stateJSON)
+	}, [cyclesState])
 
 	// new cycle
 	function createNewCycle(data: CreateCycleData) {
